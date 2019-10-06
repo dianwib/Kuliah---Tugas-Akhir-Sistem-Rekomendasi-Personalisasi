@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ab3140a5-0929-476a-9cb4-7bc7bfaf9e88" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/extract_to_matrixS.py" beforeDir="false" afterPath="$PROJECT_DIR$/extract_to_matrixS.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/itembase_similarity.py" beforeDir="false" afterPath="$PROJECT_DIR$/itembase_similarity.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -39,7 +40,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.extract_to_matrixS">
+  <component name="RunManager" selected="Python.itembase_similarity">
     <configuration name="convert_to_matrix" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="SRP" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -82,8 +83,30 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="itembase_similarity" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="SRP" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/itembase_similarity.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.itembase_similarity" />
         <item itemvalue="Python.extract_to_matrixS" />
         <item itemvalue="Python.convert_to_matrix" />
       </list>
