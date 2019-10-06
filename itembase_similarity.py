@@ -1,3 +1,4 @@
+from __future__ import division
 import pandas as pd
 import numpy as np
 data=pd.read_csv("matrix_s.csv")
