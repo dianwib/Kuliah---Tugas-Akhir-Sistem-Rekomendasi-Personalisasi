@@ -61,7 +61,10 @@ def hitung_similarity(item_a,item_b,list_irisan_a_b):
 for item_target in temp_item_kosong:
     for item_pembanding in temp_item_terisi:
         list_irisan_a_b=cari_user(item_target,item_pembanding)
-        data_2.at[item_target,item_pembanding]=hitung_similarity(item_target,item_pembanding,list_irisan_a_b)
+        if len(list_irisan_a_b)==0:
+            continue
+        else:
+            data_2.at[item_target,item_pembanding]=hitung_similarity(item_target,item_pembanding,list_irisan_a_b)
 
 
 data_2.to_csv("matrix_similaritas_item.csv")
