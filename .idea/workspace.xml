@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="ab3140a5-0929-476a-9cb4-7bc7bfaf9e88" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/extract_to_matrixS.py" beforeDir="false" afterPath="$PROJECT_DIR$/extract_to_matrixS.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/prediksi_function_item.py" beforeDir="false" afterPath="$PROJECT_DIR$/prediksi_function_item.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -40,7 +41,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.prediksi_function_item">
+  <component name="RunManager" selected="Python.extract_to_matrixS">
     <configuration name="convert_to_matrix" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="SRP" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -127,9 +128,9 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.extract_to_matrixS" />
         <item itemvalue="Python.prediksi_function_item" />
         <item itemvalue="Python.itembase_similarity" />
-        <item itemvalue="Python.extract_to_matrixS" />
         <item itemvalue="Python.convert_to_matrix" />
       </list>
     </recent_temporary>
@@ -152,7 +153,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>

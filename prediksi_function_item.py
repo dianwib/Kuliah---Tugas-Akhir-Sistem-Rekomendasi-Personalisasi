@@ -29,9 +29,9 @@ def cari_tetangga(item_target,banyak_tetangga):
     temp_per_item_target = data.loc[item_target]  # select per index
     temp_per_item_target.sort_values(ascending=False, inplace=True)  # sorting desc
     temp_per_item_target = temp_per_item_target.iloc[:banyak_tetangga]  # spit berdasarkan max k
-    print(temp_per_item_target)
+    #print(temp_per_item_target)
     list_QtU_item_k = temp_per_item_target.index.tolist()  # get index/item dari data stlh disorting ke list
-    print(list_QtU_item_k)
+    #print(list_QtU_item_k)
 
     return list_QtU_item_k
 
@@ -47,10 +47,10 @@ def hitung_function(user_target,item_target,list_item_similar_qtu):
         #print(data.at[item_target,item_similar])
         atas+=data.at[item_target,item_similar] * data_2.at[user_target,item_similar]
         bawah+=math.fabs(data.at[item_target,item_similar])
-        print("similaritas item(",item_target, item_similar,")= ",data.at[item_target, item_similar]," * rating user item(",user_target, item_similar,")= " , data_2.at[user_target, item_similar])
-        print("absolute similaritas item(",item_target, item_similar,")= ",math.fabs(data.at[item_target, item_similar]))
+        #print("similaritas item(",item_target, item_similar,")= ",data.at[item_target, item_similar]," * rating user item(",user_target, item_similar,")= " , data_2.at[user_target, item_similar])
+        #print("absolute similaritas item(",item_target, item_similar,")= ",math.fabs(data.at[item_target, item_similar]))
     hasil=float(atas)/float(bawah)
-    print(hasil)
+    #print(hasil)
     return hasil
 
 
@@ -62,9 +62,10 @@ for item_target in data.index:
     QtU=cari_tetangga(item_target,input_k)
     hasil=hitung_function(user_target,item_target,QtU)
     data_hasil.at[item_target,'Nilai']=hasil
-
+    print("item > ",item_target,": ",hasil)
 data_hasil.to_csv("matrix_prediksi.csv")
 
-data_top_n=data_hasil.sort_values(ascending=False, inplace=True)  # sorting desc
-data_hasil = data_hasil.iloc[:input_top_N]  # spit berdasarkan max k
+data_top_n=data_hasil.sort_values(ascending=False, inplace=True,by=['Nilai'])  # sorting desc
+data_top_n = data_hasil.iloc[:input_top_N]  # spit berdasarkan max k
 data_top_n.to_csv("matrix_top_n.csv")
+print(data_top_n)
