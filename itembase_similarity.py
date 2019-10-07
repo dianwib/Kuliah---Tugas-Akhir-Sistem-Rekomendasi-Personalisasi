@@ -50,10 +50,10 @@ def hitung_similarity(item_a,item_b,list_irisan_a_b):
         l_bawah_kanan.append(data.at[user - 1, item_b] ** 2)
     bawah=(math.sqrt(bawah_kiri)) * (math.sqrt(bawah_kanan))
     hasil=atas / bawah
-    print(l_atas)
-    print(l_bawah_kiri)
-    print(l_bawah_kanan)
-    print(hasil)
+    #print(l_atas)
+    #print(l_bawah_kiri)
+    #print(l_bawah_kanan)
+    #print(hasil)
 
     return hasil
 
