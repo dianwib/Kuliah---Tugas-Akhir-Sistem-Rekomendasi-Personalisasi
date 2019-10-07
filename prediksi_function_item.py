@@ -20,6 +20,7 @@ data_2.index=pd.RangeIndex(start=1, stop=944,step=1) # re index
 #print(data_2.index)
 
 input_k=int(input("masukkan k: "))
+input_top_N=int(input("masukkan jumlah top N: "))
 
 #cari tetangga
 
@@ -62,5 +63,8 @@ for item_target in data.index:
     hasil=hitung_function(user_target,item_target,QtU)
     data_hasil.at[item_target,'Nilai']=hasil
 
-
 data_hasil.to_csv("matrix_prediksi.csv")
+
+data_top_n=data_hasil.sort_values(ascending=False, inplace=True)  # sorting desc
+data_hasil = data_hasil.iloc[:input_top_N]  # spit berdasarkan max k
+data_top_n.to_csv("matrix_top_n.csv")
