@@ -1,0 +1,34 @@
+import pandas as pd
+import numpy as np
+data=pd.read_csv("matrix_rating_3.csv", dtype=float)
+del data['Unnamed: 0']
+
+data.set_index('User',inplace=True)
+
+#print(data)
+data_2=data
+for user in data.index:
+    #print(user)
+    temp_nilai_total_user=0
+    list_total_user=[]
+    for item in data.columns:
+        if data.at[user,item]>0:
+            list_total_user.append(item)
+            temp_nilai_total_user+=data.at[user,item]
+
+    nilai_rata_user=float (temp_nilai_total_user / len(list_total_user))
+    print(user,"user",temp_nilai_total_user ,"total" ,len(list_total_user),"jml","=",nilai_rata_user)
+    for item in data.columns:
+        #jika matrix index nilai 0
+        if data.at[user,item] == 0.0:
+            print(user,item," ==0")
+            data_2.at[user, item] = 0.0;
+        else:
+            nilai_matrix_lama=float(data.at[user,item])
+            print(user,item)
+            print(nilai_matrix_lama,"mat lama ","baru =",float(nilai_matrix_lama- nilai_rata_user))
+            data_2.at[user,item]=float(nilai_matrix_lama- nilai_rata_user)
+
+
+
+data_2.to_csv("real_matrix_s.csv")
