@@ -4,24 +4,23 @@ import numpy as np
 data=pd.read_csv("traditional_matrix_similaritas_item.csv")
 data_2=pd.read_csv("matrix_rm.csv")
 import math
-print(data)
 del data_2['Unnamed: 0']
 #ganti colom as index
 data.set_index('Unnamed: 0',inplace=True)
-
-data_2.index=pd.RangeIndex(start=1, stop=6,step=1) # re index
-
 print(data)
-print(data_2)
+
+data_2.index=pd.RangeIndex(start=1, stop=len(data_2.index)+1,step=1) # re index
+
+# print(data)
+# print(data_2)
 #print(data.columns)
 #print(data.index)
 
 #print(data_2.columns)
 #print(data_2.index)
-
+user_target=int(input("masukkan user target: "))
 input_k=int(input("masukkan k: "))
 input_top_N=int(input("masukkan jumlah top N: "))
-
 #cari tetangga
 
 def cari_tetangga(item_target,banyak_tetangga):
@@ -54,7 +53,6 @@ def hitung_function(user_target,item_target,list_item_similar_qtu):
     return hasil
 
 ##statis
-user_target=1
 
 data_hasil=pd.DataFrame(data,index=data.index,columns=['Nilai'])
 

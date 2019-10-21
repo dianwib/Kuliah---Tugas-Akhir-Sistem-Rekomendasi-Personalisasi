@@ -9,7 +9,7 @@ del data_2['Unnamed: 0']
 #ganti colom as index
 data.set_index('Unnamed: 0',inplace=True)
 
-data_2.index=pd.RangeIndex(start=1, stop=6,step=1) # re index
+data_2.index=pd.RangeIndex(start=1, stop=len(data_2.index)+1,step=1) # re index
 
 print(data)
 print(data_2)

@@ -1,8 +1,9 @@
 import pandas as pd
-import numpy as np
+
 data=pd.read_csv("matrix_rm.csv", dtype=float)
 del data['Unnamed: 0']
-data.index=pd.RangeIndex(start=1, stop=6,step=1)
+print(len (data.index))
+data.index=pd.RangeIndex(start=1, stop=len(data.index)+1,step=1)
 
 print(data)
 data_2=data

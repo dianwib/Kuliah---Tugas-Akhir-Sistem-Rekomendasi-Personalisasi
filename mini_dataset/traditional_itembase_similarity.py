@@ -5,7 +5,7 @@ data=pd.read_csv("matrix_s.csv",dtype=float)
 import math
 del data['Unnamed: 0']
 input_user=int(input("masukkan user target"))
-data.index=pd.RangeIndex(start=1, stop=6,step=1)
+data.index=pd.RangeIndex(start=1, stop=len(data.index)+1,step=1)
 
 temp_item_kosong=[]
 temp_item_terisi=[]
@@ -72,4 +72,5 @@ for item_target in temp_item_kosong:
             data_2.at[item_target,item_pembanding]=hitung_similarity(item_target,item_pembanding,list_irisan_a_b)
 
 
+print(data_2)
 data_2.to_csv("traditional_matrix_similaritas_item.csv")

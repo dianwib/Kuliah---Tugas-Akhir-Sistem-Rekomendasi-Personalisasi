@@ -9,7 +9,7 @@ print(data_userrank)
 import math
 del data['Unnamed: 0']
 input_user=int(input("masukkan user target"))
-data.index=pd.RangeIndex(start=1, stop=6,step=1)
+data.index=pd.RangeIndex(start=1, stop=len(data.index)+1,step=1)
 
 temp_item_kosong=[]
 temp_item_terisi=[]
