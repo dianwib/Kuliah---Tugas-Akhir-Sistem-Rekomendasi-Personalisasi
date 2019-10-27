@@ -2,11 +2,13 @@ import pandas as pd
 import numpy as np
 import math
 
+
 class dataset():
 
-    def __init__(self):
-        self.matrix_dataset=pd.read_csv("test_dataset.csv")
-
+    def __init__(self,nama_dataset):
+        print(nama_dataset)
+        self.matrix_dataset=pd.read_csv(nama_dataset)
+      
     def matrix_rm(self):
         self.matrix_rm = pd.DataFrame(self.matrix_dataset, index=np.arange(1, self.matrix_dataset["User ID"].max() + 1),columns=np.array(1, self.matrix_dataset["Movie ID"].max() + 1))
         for i in range((len(self.matrix_dataset.index))):
@@ -32,6 +34,7 @@ class dataset():
                     if self.matrix_rm.at[user, item] > 0 and self.matrix_rm.at[user_pembanding, item] > 0:
                         temp += 1
                 self.matrix_crm.at[user, user_pembanding] = temp
+                print(user+1, "dan", user_pembanding+1,":",temp)
         return self.matrix_crm
 
     def matrix_cm(self):
@@ -41,7 +44,9 @@ class dataset():
             for item in self.matrix_crm.columns:
                 if self.matrix_crm.at[user, item] > 0:
                     data_lama = self.matrix_crm.at[user,item]
+                    print(data_lama)
                     data_baru = data_lama / c[user]
+                    print(data_baru)
                     self.matrix_cm.at[user, item] = data_baru
         return self.matrix_cm
 
@@ -79,13 +84,12 @@ class dataset():
         while True:
             for user in self.matrix_cm.index:
                 temp = 0
-                # print("UR User : ", user)
+                print("UR User : ", user)
                 for out_user in list_uk()[user]:
                     temp += self.matrix_pageRank.at[out_user, self.kolom_iterasi] * self.matrix_cm.at[out_user, user]
-                    # print("data uk : ", self.matrix_pageRank.at[out_user, self.kolom_iterasi], "data cm : ", self.matrix_cm.at[out_user, user],
-                    #        "hasil uk*cm : ", temp)
+                    print("data uk : ", self.matrix_pageRank.at[out_user, self.kolom_iterasi], "data cm : ", self.matrix_cm.at[out_user, user], "hasil uk*cm : ", temp)
                 hasil = ((1 - alpha ) * self.matrix_pageRank.at[user, self.kolom_iterasi]) + (alpha * temp)
-                # print("data un : ", self.matrix_pageRank.at[user, self.kolom_iterasi], "hasil ur : ", hasil)
+                print("data un : ", self.matrix_pageRank.at[user, self.kolom_iterasi], "hasil ur : ", hasil)
                 self.matrix_pageRank.at[user, self.kolom_iterasi + 1] = hasil
             if cek_selisih(self.kolom_iterasi,nilai_error)==True:
                 break
@@ -102,12 +106,12 @@ class dataset():
                 if self.matrix_rm.at[user, item] > 0:
                     list_total_user.append(item)
             matrix_temp_nilai_rata_user[user] = float(matrix_temp_nilai_total_user[user] / len(list_total_user))
-        #print(matrix_temp_nilai_rata_user)
-        #print(self.matrix_rm)
+        print(matrix_temp_nilai_rata_user)
+        print(self.matrix_rm)
 
         self.matrix_s=pd.DataFrame(index=np.arange(1,  jml_user + 1), columns=np.arange(1, jml_item + 1))
         for user in self.matrix_rm.index:
-            #print(self.matrix_rm.loc[user],matrix_temp_nilai_rata_user[user])
+            print(self.matrix_rm.loc[user],matrix_temp_nilai_rata_user[user])
 
             self.matrix_s.loc[user] = self.matrix_rm.loc[user]-matrix_temp_nilai_rata_user[user]
 
@@ -123,7 +127,7 @@ class dataset():
                         irisan_user_pada_item_a_b.append(user)
                 else:
                     continue
-            #print("user yang merating item ", item_a, item_b, ": user ", irisan_user_pada_item_a_b)
+            print("user yang merating item ", item_a, item_b, ": user ", irisan_user_pada_item_a_b)
             return irisan_user_pada_item_a_b
 
         def hitung_similarity(item_a, item_b, list_irisan_a_b):
@@ -135,39 +139,39 @@ class dataset():
             l_bawah_kanan = []
             for user in list_irisan_a_b:
                 kolom_terakhir = (self.matrix_pageRank.columns[-1])
-                #print("pagerank user", user, "= ", self.matrix_pageRank.at[user, kolom_terakhir], "**2:",self.matrix_pageRank.at[user, kolom_terakhir] ** 2)
+                print("pagerank user", user, "= ", self.matrix_pageRank.at[user, kolom_terakhir], "**2:",self.matrix_pageRank.at[user, kolom_terakhir] ** 2)
 
                 atas += self.matrix_s.at[user, item_a] * self.matrix_s.at[user, item_b] * (self.matrix_pageRank.at[
                                                                                  user, kolom_terakhir] ** 2)  # str karena tipe data kolom pagerank adlh string
                 l_atas.append(self.matrix_s.at[user, item_a] * self.matrix_s.at[user, item_b] * (self.matrix_pageRank.at[user, kolom_terakhir] ** 2))
-                #print("similaritas ", user, item_a, ":", self.matrix_s.at[user, item_a], "dan", user, item_b, ":",self.matrix_s.at[user, item_b], "userrank", user, ":", (self.matrix_pageRank.at[user, kolom_terakhir] ** 2))
+                print("similaritas ", user, item_a, ":", self.matrix_s.at[user, item_a], "dan", user, item_b, ":",self.matrix_s.at[user, item_b], "userrank", user, ":", (self.matrix_pageRank.at[user, kolom_terakhir] ** 2))
 
                 bawah_kiri += (self.matrix_s.at[user, item_a] ** 2) * (self.matrix_pageRank.at[user, kolom_terakhir] ** 2)
                 l_bawah_kiri.append((self.matrix_s.at[user, item_a] ** 2) * (self.matrix_pageRank.at[user, kolom_terakhir] ** 2))
-                #print("similaritas ", user, item_a, ":", self.matrix_s.at[user, item_a] ** 2, "userrank", user, ":",self.matrix_pageRank.at[user, kolom_terakhir])
+                print("similaritas ", user, item_a, ":", self.matrix_s.at[user, item_a] ** 2, "userrank", user, ":",self.matrix_pageRank.at[user, kolom_terakhir])
 
                 bawah_kanan += (self.matrix_s.at[user, item_b] ** 2) * (self.matrix_pageRank.at[user, kolom_terakhir] ** 2)
                 l_bawah_kanan.append((self.matrix_s.at[user, item_b] ** 2) * (self.matrix_pageRank.at[user, kolom_terakhir] ** 2))
-                #print("similaritas ", user, item_b, ":", self.matrix_s.at[user, item_b] ** 2, "userrank", user, ":",                  self.matrix_pageRank.at[user, kolom_terakhir])
+                print("similaritas ", user, item_b, ":", self.matrix_s.at[user, item_b] ** 2, "userrank", user, ":",                  self.matrix_pageRank.at[user, kolom_terakhir])
 
             bawah = (math.sqrt(bawah_kiri)) * (math.sqrt(bawah_kanan))
             hasil = float(atas / bawah)
-            # print("sum atas ", l_atas)
-            # print("sum bawah kiri ", l_bawah_kiri)
-            # print("sum bawah kanan ", l_bawah_kanan)
-            # print("atas ", atas)
-            # print("bawah kiri ", math.sqrt(bawah_kiri))
-            # print("bawah kanan ", math.sqrt(bawah_kanan))
-            # print("bawah ", bawah)
-            # print("similaritas ", item_a, item_b)
-            # print("hasil", hasil, ">>>>>>>>>>>\n")
+            print("sum atas ", l_atas)
+            print("sum bawah kiri ", l_bawah_kiri)
+            print("sum bawah kanan ", l_bawah_kanan)
+            print("atas ", atas)
+            print("bawah kiri ", math.sqrt(bawah_kiri))
+            print("bawah kanan ", math.sqrt(bawah_kanan))
+            print("bawah ", bawah)
+            print("similaritas ", item_a, item_b)
+            print("hasil", hasil, ">>>>>>>>>>>\n")
             return hasil
 
         data_similaritas_user = pd.DataFrame(dtype=float)
 
         temp_item_kosong = []
         temp_item_terisi = []
-        #print(input_user)
+        print(input_user)
 
         for item in (self.matrix_s.columns):
             if math.isnan(self.matrix_s.at[input_user, item]):
@@ -196,7 +200,7 @@ class dataset():
                         irisan_user_pada_item_a_b.append(user)
                 else:
                     continue
-            #print("user yang merating item ", item_a, item_b, ": user ", irisan_user_pada_item_a_b)
+            print("user yang merating item ", item_a, item_b, ": user ", irisan_user_pada_item_a_b)
             return irisan_user_pada_item_a_b
 
         def hitung_similarity(item_a, item_b, list_irisan_a_b):
@@ -218,22 +222,22 @@ class dataset():
 
             hasil = float(atas / bawah)
 
-            # print("sum atas ", l_atas)
-            # print("sum bawah kiri ", l_bawah_kiri)
-            # print("sum bawah kanan ", l_bawah_kanan)
-            # print("atas ", atas)
-            # print("bawah kiri ", math.sqrt(bawah_kiri))
-            # print("bawah kanan ", math.sqrt(bawah_kanan))
-            # print("bawah ", bawah)
-            # print("similaritas ", item_a, item_b)
-            # print("hasil", hasil, ">>>>>>>>>>>\n")
+            print("sum atas ", l_atas)
+            print("sum bawah kiri ", l_bawah_kiri)
+            print("sum bawah kanan ", l_bawah_kanan)
+            print("atas ", atas)
+            print("bawah kiri ", math.sqrt(bawah_kiri))
+            print("bawah kanan ", math.sqrt(bawah_kanan))
+            print("bawah ", bawah)
+            print("similaritas ", item_a, item_b)
+            print("hasil", hasil, ">>>>>>>>>>>\n")
             return hasil
 
         data_similaritas_user = pd.DataFrame(dtype=float)
 
         temp_item_kosong = []
         temp_item_terisi = []
-        #print(input_user)
+        print(input_user)
 
         for item in (self.matrix_s.columns):
             if math.isnan(self.matrix_s.at[input_user, item]):
@@ -257,9 +261,9 @@ class dataset():
             temp_per_item_target = data.loc[item_target]  # select per index
             temp_per_item_target.sort_values(ascending=False, inplace=True)  # sorting desc
             temp_per_item_target = temp_per_item_target.iloc[:banyak_tetangga]  # spit berdasarkan max k
-            #print(temp_per_item_target)
+            print(temp_per_item_target)
             list_QtU_item_k = temp_per_item_target.index.tolist()  # get index/item dari data stlh disorting convert ke list
-            #print(list_QtU_item_k)
+            print(list_QtU_item_k)
             return list_QtU_item_k
 
         def hitung_function(user_target, item_target, list_item_similar_qtu):
@@ -269,10 +273,10 @@ class dataset():
             for item_similar in list_item_similar_qtu:
                 atas += data.at[item_target, item_similar] * self.matrix_rm.at[user_target, item_similar]
                 bawah += math.fabs(data.at[item_target, item_similar])
-                #print("similaritas item(", item_target, item_similar, ")= ", data.at[item_target, item_similar]," * rating user item(", user_target, item_similar, ")= ",self.matrix_rm.at[user_target, item_similar])
-                #print("absolute similaritas item(", item_target, item_similar, ")= ",math.fabs(data.at[item_target, item_similar]))
+                print("similaritas item(", item_target, item_similar, ")= ", data.at[item_target, item_similar]," * rating user item(", user_target, item_similar, ")= ",self.matrix_rm.at[user_target, item_similar])
+                print("absolute similaritas item(", item_target, item_similar, ")= ",math.fabs(data.at[item_target, item_similar]))
             hasil = float(atas) / float(bawah)
-            #print(hasil)
+            print(hasil)
             return hasil
 
         if tipe=="traditional":
@@ -328,27 +332,33 @@ class dataset():
 
 
 
+total_fold=5
+for i in range (1,total_fold+1):
+    print("fold :>>>>>>>>>",i)
+    afni=dataset("base_"+str(i)+"_dataset.csv")
+    #print(afni.matrix_dataset)
+
+    (afni.matrix_rm())
+    total_user=len(afni.matrix_rm.index)
+    total_item=len(afni.matrix_rm.columns)
+    (afni.matrix_crm(total_user))
+    (afni.matrix_cm())
+    (afni.pageRank(nilai_error=0.001))
+    #(afni.matrix_rm)
+    
+    print(afni.matrix_s(total_user,total_item))
+    #afni.matrix_rm.to_csv("matrik_rating_base_"+str(i)+".csv")
+
+    print(">>>>>>>>>>>>>>>>>>>")
+    print(afni.matrix_prediksi("traditional",2))
+    print(afni.matrix_rm_plus_prediksi)
+    print(afni.matrix_rm_plus_prediksi.to_csv("base_"+str(i)+"_matrik_prediksi_traditional_itembase.csv"))
+    #print(afni.lihat_top_n("traditional",5,2))
 
 
-afni=dataset()
-print(afni.matrix_dataset)
-print(afni.matrix_rm())
-total_user=len(afni.matrix_rm.index)
-total_item=len(afni.matrix_rm.columns)
-(afni.matrix_crm(total_user))
-(afni.matrix_cm())
-(afni.pageRank(nilai_error=0.00000001))
-print(afni.matrix_rm)
-# afni.matrix_rm.to_csv("matrik_rating.csv")
+    print(afni.matrix_prediksi("userrank",2))
+    print(afni.matrix_rm_plus_prediksi_userrank)
+    print(afni.matrix_rm_plus_prediksi_userrank.to_csv("base_"+str(i)+"_matrik_prediksi_userrank_itembase.csv"))
+    #print(afni.lihat_top_n("userrank",5,2))
 
-(afni.matrix_s(total_user,total_item))
-print(">>>>>>>>>>>>>>>>>>>")
-(afni.matrix_prediksi("traditional",2))
-
-(afni.matrix_prediksi("userrank",2))
-print(afni.matrix_rm_plus_prediksi)
-afni.matrix_rm_plus_prediksi.to_csv("test_1_matrik_prediksi_traditional_itembase.csv")
-print(afni.lihat_top_n("traditional",5,2))
-print(afni.matrix_rm_plus_prediksi_userrank)
-afni.matrix_rm_plus_prediksi_userrank.to_csv("test_1_matrik_prediksi_userrank_itembase.csv")
-print(afni.lihat_top_n("userrank",5,2))
+    
