@@ -5,10 +5,23 @@ import math
 
 class dataset():
 
-    def __init__(self,nama_dataset):
+    def __init__(self,nama_dataset,nama_hidden_dataset):
         print(nama_dataset)
+        print(nama_hidden_dataset)
         self.matrix_dataset=pd.read_csv(nama_dataset)
-      
+        self.matrix_hidden=pd.read_csv(nama_hidden_dataset)
+
+    def hidden_matrix_rm(self):
+        self.hidden_matrix_rm = pd.DataFrame(dtype=float)
+        for i in range((len(self.matrix_hidden.index))):
+            user = self.matrix_hidden.at[i, "User ID"]
+            film = self.matrix_hidden.at[i, "Movie ID"]
+            rating = self.matrix_hidden.at[i, "Rating"]
+            self.hidden_matrix_rm.at[user, film] = rating
+
+        print(self.hidden_matrix_rm)
+        return self.hidden_matrix_rm
+
     def matrix_rm(self):
         self.matrix_rm = pd.DataFrame(self.matrix_dataset, index=np.arange(1, self.matrix_dataset["User ID"].max() + 1),columns=np.array(1, self.matrix_dataset["Movie ID"].max() + 1))
         for i in range((len(self.matrix_dataset.index))):
@@ -16,10 +29,7 @@ class dataset():
             film = self.matrix_dataset.at[i, "Movie ID"]
             rating = self.matrix_dataset.at[i, "Rating"]
             self.matrix_rm.at[user, film] = rating
-
-        #convert NaN to 0
-        #for item in self.matrix_rm.columns:
-        #    self.matrix_rm[item].fillna(0.0, inplace=True)
+        print(self.matrix_rm)
         return self.matrix_rm
 
     def matrix_crm(self,jml_user):
@@ -34,7 +44,8 @@ class dataset():
                     if self.matrix_rm.at[user, item] > 0 and self.matrix_rm.at[user_pembanding, item] > 0:
                         temp += 1
                 self.matrix_crm.at[user, user_pembanding] = temp
-                print(user+1, "dan", user_pembanding+1,":",temp)
+                #print(user+1, "dan", user_pembanding+1,":",temp)
+        print(self.matrix_crm)
         return self.matrix_crm
 
     def matrix_cm(self):
@@ -44,10 +55,11 @@ class dataset():
             for item in self.matrix_crm.columns:
                 if self.matrix_crm.at[user, item] > 0:
                     data_lama = self.matrix_crm.at[user,item]
-                    print(data_lama)
+                    #print(data_lama)
                     data_baru = data_lama / c[user]
-                    print(data_baru)
+                    #print(data_baru)
                     self.matrix_cm.at[user, item] = data_baru
+        print(self.matrix_cm)
         return self.matrix_cm
 
     def pageRank(self,alpha=0.5,nilai_error=0.001):
@@ -85,7 +97,9 @@ class dataset():
             for user in self.matrix_cm.index:
                 temp = 0
                 print("UR User : ", user)
+                print(list_uk()[user])
                 for out_user in list_uk()[user]:
+                    print(out_user)
                     temp += self.matrix_pageRank.at[out_user, self.kolom_iterasi] * self.matrix_cm.at[out_user, user]
                     print("data uk : ", self.matrix_pageRank.at[out_user, self.kolom_iterasi], "data cm : ", self.matrix_cm.at[out_user, user], "hasil uk*cm : ", temp)
                 hasil = ((1 - alpha ) * self.matrix_pageRank.at[user, self.kolom_iterasi]) + (alpha * temp)
@@ -93,7 +107,7 @@ class dataset():
                 self.matrix_pageRank.at[user, self.kolom_iterasi + 1] = hasil
             if cek_selisih(self.kolom_iterasi,nilai_error)==True:
                 break
-
+        print(self.matrix_pageRank)
         return self.matrix_pageRank
 
     def matrix_s(self,jml_user,jml_item):
@@ -106,15 +120,15 @@ class dataset():
                 if self.matrix_rm.at[user, item] > 0:
                     list_total_user.append(item)
             matrix_temp_nilai_rata_user[user] = float(matrix_temp_nilai_total_user[user] / len(list_total_user))
-        print(matrix_temp_nilai_rata_user)
-        print(self.matrix_rm)
+        #print(matrix_temp_nilai_rata_user)
+        #print(self.matrix_rm)
 
         self.matrix_s=pd.DataFrame(index=np.arange(1,  jml_user + 1), columns=np.arange(1, jml_item + 1))
         for user in self.matrix_rm.index:
-            print(self.matrix_rm.loc[user],matrix_temp_nilai_rata_user[user])
+            #print(self.matrix_rm.loc[user],matrix_temp_nilai_rata_user[user])
 
             self.matrix_s.loc[user] = self.matrix_rm.loc[user]-matrix_temp_nilai_rata_user[user]
-
+        print(self.matrix_s)
         return self.matrix_s
 
     def matrix_similarity_userrank(self,input_user=1):
@@ -122,9 +136,9 @@ class dataset():
         def cari_user(item_a, item_b):
             irisan_user_pada_item_a_b = []
             for user in self.matrix_s.index:
-                if user != input_user:
-                    if not math.isnan(self.matrix_s.at[user, item_a])  and not math.isnan(self.matrix_s.at[user, item_b]):
-                        irisan_user_pada_item_a_b.append(user)
+                #if user != input_user:
+                if not math.isnan(self.matrix_s.at[user, item_a])  and not math.isnan(self.matrix_s.at[user, item_b]):
+                    irisan_user_pada_item_a_b.append(user)
                 else:
                     continue
             print("user yang merating item ", item_a, item_b, ": user ", irisan_user_pada_item_a_b)
@@ -190,14 +204,13 @@ class dataset():
         return data_similaritas_user
 
 
-    def matrix_similarity_traditional(self,input_user=1):
-
+    def matrix_similarity_traditional(self,input_user):
         def cari_user(item_a, item_b):
             irisan_user_pada_item_a_b = []
             for user in self.matrix_s.index:
-                if user != input_user:
-                    if not math.isnan(self.matrix_s.at[user, item_a])  and not math.isnan(self.matrix_s.at[user, item_b]):
-                        irisan_user_pada_item_a_b.append(user)
+                #if user != input_user: #karena user tarrget tidak mungkin memberi nilai rating pada item target (a,b)
+                if not math.isnan(self.matrix_s.at[user, item_a])  and not math.isnan(self.matrix_s.at[user, item_b]):
+                    irisan_user_pada_item_a_b.append(user)
                 else:
                     continue
             print("user yang merating item ", item_a, item_b, ": user ", irisan_user_pada_item_a_b)
@@ -260,7 +273,7 @@ class dataset():
         def cari_tetangga(item_target, banyak_tetangga):
             temp_per_item_target = data.loc[item_target]  # select per index
             temp_per_item_target.sort_values(ascending=False, inplace=True)  # sorting desc
-            temp_per_item_target = temp_per_item_target.iloc[:banyak_tetangga]  # spit berdasarkan max k
+            temp_per_item_target = temp_per_item_target.iloc[:banyak_tetangga]  # split berdasarkan max k
             print(temp_per_item_target)
             list_QtU_item_k = temp_per_item_target.index.tolist()  # get index/item dari data stlh disorting convert ke list
             print(list_QtU_item_k)
@@ -281,32 +294,31 @@ class dataset():
 
         if tipe=="traditional":
             self.matrix_rm_plus_prediksi=self.matrix_rm.copy()
-            for user_target in self.matrix_rm.index:
+            for user_target in self.hidden_matrix_rm.index:#user_target = all user in data hidden / test
                 data = self.matrix_similarity_traditional(user_target)
-                data_hasil = {}
+
                 for item_target in data.index:
                     QtU = cari_tetangga(item_target, input_K)
                     hasil = hitung_function(user_target, item_target, QtU)
-                    data_hasil[item_target] = hasil
+
                     self.matrix_rm_plus_prediksi.at[user_target, item_target] = hasil
 
             return self.matrix_rm_plus_prediksi
 
         elif tipe == "userrank":
             self.matrix_rm_plus_prediksi_userrank = self.matrix_rm.copy()
-            for user_target in self.matrix_rm.index:
+            for user_target in self.hidden_matrix_rm.index:#user_target = all user in data hidden / test
+                print(user_target,"user target >>>")
                 data = self.matrix_similarity_userrank(user_target)
-                data_hasil = {}
+
                 for item_target in data.index:
                     QtU = cari_tetangga(item_target, input_K)
                     hasil = hitung_function(user_target, item_target, QtU)
-                    data_hasil[item_target] = hasil
                     self.matrix_rm_plus_prediksi_userrank.at[user_target, item_target] = hasil
 
             return self.matrix_rm_plus_prediksi_userrank
 
     def lihat_top_n(self,tipe="traditional",user_target=1,top_n=2):
-
         if tipe=="traditional":
             data_top_n = self.matrix_rm_plus_prediksi.loc[user_target]
             for item in self.matrix_rm.columns:
@@ -316,7 +328,6 @@ class dataset():
             data_top_n.sort_values(ascending=False, inplace=True)  # sorting desc
             data_top_n = data_top_n.iloc[:top_n]
             return (data_top_n)
-
 
         elif tipe == "userrank":
             data_top_n = self.matrix_rm_plus_prediksi_userrank.loc[user_target]
@@ -328,14 +339,12 @@ class dataset():
             data_top_n = data_top_n.iloc[:top_n]
             return (data_top_n)
 
-            #for item in self.matrix_rm.columns:
-
-
 
 total_fold=5
 for i in range (1,total_fold+1):
     print("fold :>>>>>>>>>",i)
-    afni=dataset("base_"+str(i)+"_dataset.csv")
+    afni=dataset("base_"+str(i)+"_dataset.csv","hidden_base_"+str(i)+"_dataset.csv")
+    #afni = dataset("dataset.csv")
     #print(afni.matrix_dataset)
 
     (afni.matrix_rm())
@@ -343,9 +352,10 @@ for i in range (1,total_fold+1):
     total_item=len(afni.matrix_rm.columns)
     (afni.matrix_crm(total_user))
     (afni.matrix_cm())
+    (afni.hidden_matrix_rm())
+
     (afni.pageRank(nilai_error=0.001))
-    #(afni.matrix_rm)
-    
+
     print(afni.matrix_s(total_user,total_item))
     #afni.matrix_rm.to_csv("matrik_rating_base_"+str(i)+".csv")
 
@@ -360,5 +370,3 @@ for i in range (1,total_fold+1):
     print(afni.matrix_rm_plus_prediksi_userrank)
     print(afni.matrix_rm_plus_prediksi_userrank.to_csv("base_"+str(i)+"_matrik_prediksi_userrank_itembase.csv"))
     #print(afni.lihat_top_n("userrank",5,2))
-
-    

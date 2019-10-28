@@ -12,24 +12,22 @@ class evaluasi():
         self.matrix_rm_hidden()
 
     def matrix_rm_hidden(self):
-        self.matrix_rm_hidden = pd.DataFrame( dtype=float, index=np.arange(1, self.hidden_dataset["User ID"].max() + 1),columns=np.arange(1, self.hidden_dataset["Movie ID"].max() + 1))
+        self.matrix_rm_hidden = pd.DataFrame( dtype=float)
         for i in range((len(self.hidden_dataset.index))):
             user = self.hidden_dataset.at[i, "User ID"]
             film = self.hidden_dataset.at[i, "Movie ID"]
             rating = self.hidden_dataset.at[i, "Rating"]
             self.matrix_rm_hidden.at[user, film] = rating
 
-        print(self.matrix_rm_hidden)
+        print(self.matrix_rm_hidden,"hidden")
         return self.matrix_rm_hidden
 
 
     def evaluasi_mae(self,fold):
-        matrik_mae = pd.DataFrame(columns=['Item Hidden', 'MAE Traditional', 'MAE Userrank'])
-
-        self.data_test_traditional_itembase = pd.read_csv("base_" + str(fold) + "_matrik_prediksi_traditional_itembase.csv")
-        self.data_test_userrank_itembase = pd.read_csv("base_" + str(fold) + "_matrik_prediksi_userrank_itembase.csv")
-        self.data_test_userrank_itembase.set_index('Unnamed: 0', inplace=True)
-        self.data_test_traditional_itembase.set_index('Unnamed: 0', inplace=True)
+        self.matrix_prediksi_traditional_itembase = pd.read_csv("base_" + str(fold) + "_matrik_prediksi_traditional_itembase.csv")
+        self.matrix_prediksi_userrank_itembase = pd.read_csv("base_" + str(fold) + "_matrik_prediksi_userrank_itembase.csv")
+        self.matrix_prediksi_userrank_itembase.set_index('Unnamed: 0', inplace=True)
+        self.matrix_prediksi_traditional_itembase.set_index('Unnamed: 0', inplace=True)
 
         def cari_data_hidden(user):
             temp_item_data_test = []
@@ -40,52 +38,50 @@ class evaluasi():
 
         def hitung_mae(user_target, list_data_test, matrix_test):
             temp_nilai_atas = 0
-            print(matrix_test)
-            for item in list_data_test:
-                print(self.matrix_rm_hidden.at[user_target, item], '-', matrix_test.at[user_target, str(item)])
+           # print(matrix_test,"matrix prediksi")
+            for item in list_data_test:#menghitung nilai mae pada setiap user (seluruh item)
+                print("data hidden - data prediksi || user target" ,user_target,"item",item,self.matrix_rm_hidden.at[user_target, item], '-', matrix_test.at[user_target, str(item)])
                 temp_nilai_atas += math.fabs(self.matrix_rm_hidden.at[user_target, item] - matrix_test.at[user_target, str(item)])
 
-            hasil = float(temp_nilai_atas / len(list_data_test))
+            hasil = float(temp_nilai_atas)
+            print("user",user_target,"hasil",hasil)
             return hasil
 
         eval_traditional = 0.0
         eval_userrank = 0.0
         for user in self.matrix_rm_hidden.index :
-            print(user)
+            print("<<< user >>> ",user)
             kumpulan_data_test = cari_data_hidden(user)
-            print(kumpulan_data_test)
-            if len(kumpulan_data_test) == 0:
-                continue
-            else:
-                print("traditional")
-                hasil_mae_traditional_itembase = hitung_mae(user, kumpulan_data_test,
-                                                            self.data_test_traditional_itembase)
-                print("userrank+traditional")
-                hasil_mae_userrank_itembase = hitung_mae(user, kumpulan_data_test,
-                                                         self.data_test_userrank_itembase)
+            print("user target di data hidden: ", user," dan item hidden: ",kumpulan_data_test)
+            print("\ntraditional")
 
-                # set to local pd
-                matrik_mae.at[user, 'Item Hidden'] = kumpulan_data_test
-                matrik_mae.at[user, 'MAE Traditional'] = hasil_mae_traditional_itembase
-                matrik_mae.at[user, 'MAE Userrank'] = hasil_mae_userrank_itembase
+            hasil_mae_traditional_itembase = hitung_mae(user, kumpulan_data_test,
+                                                            self.matrix_prediksi_traditional_itembase)
+            print("\nuserrank+traditional")
+            hasil_mae_userrank_itembase = hitung_mae(user, kumpulan_data_test,
+                                                         self.matrix_prediksi_userrank_itembase)
+            # #
+            # # # set to local pd
+            # # matrik_mae.at[user, 'Item Hidden'] = kumpulan_data_test
+            # # matrik_mae.at[user, 'MAE Traditional'] = hasil_mae_traditional_itembase
+            # # matrik_mae.at[user, 'MAE Userrank'] = hasil_mae_userrank_itembase
+            #
+            # print("user >>", user, "\nMAE traditional :", hasil_mae_traditional_itembase, "\nMAE userrank :",
+            #       hasil_mae_userrank_itembase)
 
-            print("user >>", user, "\nMAE traditional :", hasil_mae_traditional_itembase, "\nMAE userrank :",
-                  hasil_mae_userrank_itembase)
-
-            eval_traditional += hasil_mae_traditional_itembase
+            eval_traditional += hasil_mae_traditional_itembase #nilai mae tiap user update (+) dr seluruh user
             eval_userrank += hasil_mae_userrank_itembase
 
 
 
-        rata_total_eval_userrank = eval_userrank / len(self.matrix_rm_hidden.index)
-        rata_total_eval_traditional = eval_traditional / len(self.matrix_rm_hidden.index)
+        mae_total_eval_userrank = eval_userrank / len(self.hidden_dataset.index) #nilai total mae dibagi banyak data hidden
+        mae_total_eval_traditional = eval_traditional / len(self.hidden_dataset.index)
 
-        print(matrik_mae)
-        print(">>>>>>>>>>>>>>>\neval all fold",fold,"\nTraditional :", rata_total_eval_traditional, "\nUserrank :", rata_total_eval_userrank)
+        print(">>>>>>>>>>>>>>>\neval all fold ke ",fold,"\nTraditional :", mae_total_eval_traditional, "\nUserrank :", mae_total_eval_userrank)
 
         fold_matrik_mae.at[fold, "Fold"] = fold
-        fold_matrik_mae.at[fold, 'MAE Userrank'] = rata_total_eval_userrank
-        fold_matrik_mae.at[fold, 'MAE Traditional'] = rata_total_eval_traditional
+        fold_matrik_mae.at[fold, 'MAE Userrank'] = mae_total_eval_userrank
+        fold_matrik_mae.at[fold, 'MAE Traditional'] = mae_total_eval_traditional
 
 
 total_fold=5
